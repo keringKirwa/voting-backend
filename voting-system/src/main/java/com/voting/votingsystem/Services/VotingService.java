@@ -89,10 +89,6 @@ public class VotingService {
         return votingTallies;
     }
     public String  retractVote(Integer cId) throws Exceptions {
-
-        /*Note that cID here is type-casted to an object and not an integer , if this is not the case then  the error
-        *  we will get will e of type unknown server error .*/
-
         if(hasVoted.get(cId)!=null && hasVoted.get(cId)!=1){
             logger.error("Voter with Id ( " +cId+ " )Had Not yet voted");
             throw new Exceptions("Had Not yet voted ");

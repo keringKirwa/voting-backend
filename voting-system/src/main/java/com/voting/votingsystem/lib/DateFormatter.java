@@ -1,6 +1,5 @@
 package com.voting.votingsystem.lib;
 
-import org.springframework.context.annotation.Bean;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

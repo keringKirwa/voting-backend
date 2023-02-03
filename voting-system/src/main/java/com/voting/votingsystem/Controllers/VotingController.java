@@ -1,15 +1,33 @@
 package com.voting.votingsystem.Controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.voting.votingsystem.Entities.Body;
-import com.voting.votingsystem.Entities.Item;
+import com.voting.votingsystem.Entities.*;
 import com.voting.votingsystem.lib.DateFormatter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.ArrayList;
 
 @RestController
+@RequiredArgsConstructor
 public class VotingController {
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
+    /**
+     * the controller funtionns in this case can be used to return a ResponsrEntity instead of returning a specific object .
+     * in this way , we will  we can return an error object  too.
+     * @param jsonString
+     * @return
+     */
     @PostMapping("/mpesa")
     public String createCallback(@RequestBody String jsonString) {
         DateFormatter dateFormatter=new DateFormatter();
@@ -33,7 +51,6 @@ public class VotingController {
 
                 String formattedDate= dateFormatter.dateFormatter(unformattedDate);
 
-
             }else {
                 System.out.println("UNSUCCESSFUL TRANSACTION :: The user cancelled the transaction OR  there is insufficient funds in his or her account !!! ");
                 System.out.println("JSON DATA*(UNSUCCESSFUL) :: "+jsonString);
@@ -41,13 +58,32 @@ public class VotingController {
 
         }catch(Exception ref){
             ref.printStackTrace();
-
         }
-
-
         return "Success message here ";
 
     }
+
+    @PostMapping("/auth/login")
+    public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest){
+
+        try {
+            /**
+             * note that teh  authenticationManager below refers to DAO authentication  manager .
+             */
+            System.out.println(new PasswordEncode().passwordEncoder().encode(loginRequest.getPassword()));
+
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return ResponseEntity.ok(new LoginResponse(authentication.getName(),"this is the JWT token"));
+
+        } catch (BadCredentialsException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+        }
+
+    }
+
 
 
 

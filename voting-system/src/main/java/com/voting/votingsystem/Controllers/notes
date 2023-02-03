@@ -1,0 +1,14 @@
+ @Autowired
+    UserDetailsServiceImpl userDetailsService;
+    private static final String[] WHITE_LIST_URLS = {
+            "/login",
+    };
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+
+        http.cors().and().csrf().disable(); //prevent attackers from performing cross site request forgery and executing malicious scripts .
+        http.authorizeHttpRequests().antMatchers(WHITE_LIST_URLS).permitAll().anyRequest().authenticated().and().formLogin().disable();
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);//stop the session so that @request is authenticated  .
+
+    }

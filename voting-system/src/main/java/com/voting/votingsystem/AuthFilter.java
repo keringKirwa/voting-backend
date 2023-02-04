@@ -5,7 +5,9 @@ import com.voting.votingsystem.utils.JWTInterpreter;
 import java.io.IOException;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +29,10 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 @RequiredArgsConstructor
 public class AuthFilter extends OncePerRequestFilter {
+    /**
+     * this  is   the filter that the application is  will be using , this   is a JWT FILTER , and therefore the app will know that the user to login  can be found  in the token .
+     * Again note that the SessionPolicy STATELESS indicates  that the app should not use the session base authentication policy.
+     */
 
     private final JWTInterpreter jwtInterpreter;
     private final UserDetailsServiceImpl userDetailsServiceImpl;
@@ -38,7 +44,7 @@ public class AuthFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("BearerKKDEV ")) {
             filterChain.doFilter(request, response);
             return; //in this case here , the return here will stop calling the other methods in the filter chain .
         }
@@ -47,11 +53,21 @@ public class AuthFilter extends OncePerRequestFilter {
 
         userEmail = jwtInterpreter.extractUserName(jwt); //the  user email was used as the  username.
 
+        if (SecurityContextHolder.getContext().getAuthentication() != null){
+            System.out.println(":::::: THE CONTEXT WAS NOT NULL .... REQUEST STOPPED ...");
+        }
+
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsServiceImpl.loadUserByUsername(userEmail);
             if (jwtInterpreter.isTokenValid(jwt, userDetails)) {
+
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); //this one here updates more auth details , that is , more details for the authenticated request .
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                /**
+                 * this one here updates more auth details , that is , more details for the authenticated request .
+                 * the authToken will have granted authorities , and the user  and a principal object that has the user details . the getDetails could give us  the session id .
+                 */
+
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }

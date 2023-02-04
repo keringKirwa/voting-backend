@@ -9,23 +9,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.Authentication;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 public class VotingController {
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     @Autowired
     private JWTInterpreter jwtInterpreter;
@@ -34,7 +26,7 @@ public class VotingController {
 
     /**
      * the controller funtionns in this case can be used to return a ResponsrEntity instead of returning a specific object .
-     * in this way , we will  we can return an error object  too.
+     * in this way , we can return an error object  too.
      *
      * @param jsonString
      * @return
@@ -84,15 +76,13 @@ public class VotingController {
              * the  jwt token that is not expired  must be provided . so for the register  , we save the user details , then for the login  , we authenticate the users .
              */
 
-            HashMap<String, Object> hashMap=new HashMap<>();
+            HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("kelvin", "kering");
             hashMap.put("school", "Lamaon");
 
             System.out.println(new PasswordEncode().passwordEncoder().encode(loginRequest.getPassword()));
 
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            return ResponseEntity.ok(new LoginResponse(authentication.getName(),jwtInterpreter.generateJWT(hashMap,userDetailsService.loadUserByUsername("kelvin"))));
+            return ResponseEntity.ok(new LoginResponse(loginRequest.getUsername(), jwtInterpreter.generateJWT(hashMap, userDetailsService.loadUserByUsername("kelvin"))));
 
         } catch (BadCredentialsException e) {
             e.printStackTrace();
@@ -104,16 +94,14 @@ public class VotingController {
     @PostMapping("/auth/register")
     public ResponseEntity<Object> register(@RequestBody LoginRequest loginRequest) {
         /**
-         * no auth for the register  page .
+         * no auth for the register  page .will just populate the  user  register details to the database.
          */
 
         try {
-            System.out.println("register Controller called ");
-            System.out.println(loginRequest.getPassword());
 
+            System.out.println("LOGIN PASSWORD :: " + loginRequest.getPassword());
 
-
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("hello login sucessful...");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("hello login successful...");
 
         } catch (BadCredentialsException e) {
             e.printStackTrace();

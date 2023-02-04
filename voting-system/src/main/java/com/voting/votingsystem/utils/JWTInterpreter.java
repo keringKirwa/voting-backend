@@ -16,7 +16,7 @@ import java.util.function.Function;
 @Service
 public class JWTInterpreter {
     private static final String SECRET_KEY = "556B58703272357538782F413F4428472B4B6250655368566D59713374367639";
-    final long JWT_TOKEN_VALIDITY = 12 * 60 * 60 * 1000;
+    final long JWT_TOKEN_VALIDITY = 60 * 1000;
 
     /**
      * https://allkeysgenerator.com/Random/Security-Encryption-Key-Generator.aspx

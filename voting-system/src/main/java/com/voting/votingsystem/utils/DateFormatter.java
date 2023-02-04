@@ -1,4 +1,4 @@
-package com.voting.votingsystem.lib;
+package com.voting.votingsystem.utils;
 
 
 import java.text.ParseException;

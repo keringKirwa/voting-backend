@@ -1,4 +1,5 @@
 package com.voting.votingsystem.Controllers;
+
 import com.voting.votingsystem.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,15 +15,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 /**
  * Note that the @Bean functions are all callable from anywhere  in the app. the  difference with other funcions  is that this funcion heer
  * when called is managed by spring boot and not the common  its users .
- //this class  here makes sure that   this is the spring boot class and  not just a common java class.
- *
+ * //this class  here makes sure that   this is the spring boot class and  not just a common java class.
+ * Allow access to the register and  the login page ... , then all the other pages the users must  be authenticated.
  */
 
 @Configuration
-public class SpringConfig  {
+public class SpringConfig {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
-
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -42,7 +42,6 @@ public class SpringConfig  {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
 
 }

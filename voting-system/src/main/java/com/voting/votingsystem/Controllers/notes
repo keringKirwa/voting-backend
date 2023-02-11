@@ -12,3 +12,12 @@
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);//stop the session so that @request is authenticated  .
 
     }
+
+DATABASE_URL=postgresql://${{ PGUSER }}:${{ PGPASSWORD }}@${{ PGHOST }}:${{ PGPORT }}/${{ PGDATABASE }}
+PGDATABASE=railway
+PGHOST=containers-us-west-48.railway.app
+PGPASSWORD=4f60DT9mdI0YZHllP2HU
+PGPORT=7660
+PGUSER=postgres
+ACTIVE_PROFILE=prod
+
